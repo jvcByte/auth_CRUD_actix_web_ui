@@ -1,6 +1,5 @@
 @import 'tailwindcss';
-/* import Konsta UI theme */
-@import 'konsta/react/theme.css';
+@import '../node_modules/konsta/react/theme.css';
 
 
 :root {
