@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">auth_crud_actix_ui</string>
+    <string name="main_activity_title">auth_crud_actix_ui</string>
+</resources>
