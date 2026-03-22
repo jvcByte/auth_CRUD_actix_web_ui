@@ -1,17 +1,16 @@
 "use client";
 
 import { useAuth } from "@/lib/auth-context";
-import {
-  App,
-  Page,
-  Navbar,
-  Block,
-  BlockTitle,
-  List,
-  ListItem,
-  Button,
-  Card,
-} from "konsta/react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { LogOut, User, KeyRound, Bell, ChevronRight, Shield } from "lucide-react";
+
+const menuItems = [
+  { label: "Edit Profile", icon: User, color: "text-indigo-400", bg: "bg-indigo-500/10" },
+  { label: "Change Password", icon: KeyRound, color: "text-purple-400", bg: "bg-purple-500/10" },
+  { label: "Notifications", icon: Bell, color: "text-pink-400", bg: "bg-pink-500/10" },
+  { label: "Security", icon: Shield, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+];
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
@@ -24,62 +23,84 @@ export default function DashboardPage() {
     .slice(0, 2);
 
   return (
-    <App theme="ios">
-      <Page>
-        <Navbar
-          large
-          transparent
-          title="My Account"
-          right={
-            <button
-              onClick={logout}
-              className="text-primary text-[17px] font-normal"
-            >
-              Sign Out
-            </button>
-          }
-        />
+    <div className="min-h-screen bg-[#0f0f13] text-white">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
+        <div className="absolute -top-40 -left-20 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 -right-40 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl" />
+      </div>
 
-        {/* Avatar card */}
-        <Block className="flex flex-col items-center gap-3 pt-4 pb-2">
-          <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-white text-3xl font-semibold shadow-md">
-            {initials}
+      <div className="relative max-w-md mx-auto px-4 pt-14 pb-16">
+        {/* Top bar */}
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <p className="text-zinc-500 text-sm">Good day 👋</p>
+            <h1 className="text-xl font-bold tracking-tight">{user?.name}</h1>
           </div>
-          <div className="text-center">
-            <p className="text-xl font-semibold">{user?.name}</p>
-            <p className="text-sm text-black/50 dark:text-white/50">
-              {user?.email}
-            </p>
-          </div>
-        </Block>
-
-        {/* Profile info */}
-        <BlockTitle>Profile</BlockTitle>
-        <List inset strong>
-          <ListItem
-            title="Name"
-            after={<span className="text-black/50 dark:text-white/50">{user?.name}</span>}
-          />
-          <ListItem
-            title="Email"
-            after={<span className="text-black/50 dark:text-white/50">{user?.email}</span>}
-          />
-        </List>
-
-        {/* Account actions */}
-        <BlockTitle>Account</BlockTitle>
-        <List inset strong>
-          <ListItem chevron title="Edit Profile" link onClick={() => {}} />
-          <ListItem chevron title="Change Password" link onClick={() => {}} />
-          <ListItem chevron title="Notifications" link onClick={() => {}} />
-        </List>
-
-        <Block className="mt-2">
-          <Button large outline tonal onClick={logout}>
-            Sign Out
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={logout}
+            aria-label="Sign out"
+            className="rounded-2xl"
+          >
+            <LogOut className="w-4 h-4" />
           </Button>
-        </Block>
-      </Page>
-    </App>
+        </div>
+
+        {/* Profile card */}
+        <Card className="mb-5 bg-gradient-to-br from-indigo-500/15 to-purple-600/15">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-indigo-500/30 shrink-0">
+                {initials}
+              </div>
+              <div className="min-w-0">
+                <p className="font-semibold text-lg truncate">{user?.name}</p>
+                <p className="text-zinc-400 text-sm truncate">{user?.email}</p>
+              </div>
+            </div>
+
+            <div className="mt-5 pt-5 border-t border-white/10 grid grid-cols-2 gap-3">
+              <div className="bg-white/5 rounded-2xl px-4 py-3">
+                <p className="text-zinc-500 text-xs mb-0.5">Member since</p>
+                <p className="text-sm font-semibold">2026</p>
+              </div>
+              <div className="bg-white/5 rounded-2xl px-4 py-3">
+                <p className="text-zinc-500 text-xs mb-0.5">Status</p>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+                  <p className="text-sm font-semibold">Active</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Settings menu */}
+        <Card className="mb-5 overflow-hidden">
+          {menuItems.map((item, i) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.label}
+                className={`w-full flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-colors text-left ${i < menuItems.length - 1 ? "border-b border-white/5" : ""}`}
+              >
+                <div className={`w-9 h-9 rounded-xl ${item.bg} ${item.color} flex items-center justify-center shrink-0`}>
+                  <Icon className="w-4 h-4" />
+                </div>
+                <span className="text-sm font-medium flex-1">{item.label}</span>
+                <ChevronRight className="w-4 h-4 text-zinc-600" />
+              </button>
+            );
+          })}
+        </Card>
+
+        {/* Sign out */}
+        <Button variant="destructive" className="w-full" size="lg" onClick={logout}>
+          <LogOut className="w-4 h-4" />
+          Sign Out
+        </Button>
+      </div>
+    </div>
   );
 }

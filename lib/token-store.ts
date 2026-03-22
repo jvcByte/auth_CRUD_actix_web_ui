@@ -1,10 +1,8 @@
 /**
- * Abstracts refresh token persistence.
- * - In Tauri (mobile/desktop): uses @tauri-apps/plugin-store for secure OS storage.
- * - In browser (webapp): falls back to localStorage.
+ * Refresh token persistence.
+ * - Tauri (mobile/desktop): @tauri-apps/plugin-store (secure OS storage)
+ * - Browser (webapp): localStorage
  */
-
-import { load } from "@tauri-apps/plugin-store";
 
 const KEY = "refresh_token";
 
@@ -13,6 +11,7 @@ function isTauri(): boolean {
 }
 
 async function getStore() {
+  const { load } = await import("@tauri-apps/plugin-store");
   return load("auth.json");
 }
 
