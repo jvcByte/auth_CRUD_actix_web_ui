@@ -7,13 +7,17 @@ export NDK_HOME="$ANDROID_HOME/ndk/26.3.11579264"
 echo "→ Building Next.js static export..."
 pnpm build
 
-echo "→ Regenerating Android project..."
-rm -rf src-tauri/gen/android
-NDK_HOME=$NDK_HOME pnpm tauri android init
+# Only init if the Android project doesn't exist yet
+if [ ! -d "src-tauri/gen/android" ]; then
+  echo "→ Initializing Android project..."
+  NDK_HOME=$NDK_HOME pnpm tauri android init
 
-echo "→ Patching Gradle wrapper to use cached 8.13..."
-GRADLE_PROPS="src-tauri/gen/android/gradle/wrapper/gradle-wrapper.properties"
-sed -i 's|distributionUrl=.*|distributionUrl=https\\://services.gradle.org/distributions/gradle-8.13-bin.zip|' "$GRADLE_PROPS"
+  echo "→ Patching Gradle wrapper to use cached 8.13..."
+  GRADLE_PROPS="src-tauri/gen/android/gradle/wrapper/gradle-wrapper.properties"
+  sed -i 's|distributionUrl=.*|distributionUrl=https\\://services.gradle.org/distributions/gradle-8.13-bin.zip|' "$GRADLE_PROPS"
+else
+  echo "→ Android project exists, skipping init..."
+fi
 
 echo "→ Building Android APK..."
 NDK_HOME=$NDK_HOME pnpm tauri android build --apk
