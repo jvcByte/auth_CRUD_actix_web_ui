@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Pencil, Trash2, ChevronLeft, X, Check, AlertCircle, Users as UsersIcon } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
-import { api, AuthUser, UpdateUserDto } from "@/lib/api";
+import { api, AuthUser } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,9 +29,11 @@ function EditModal({
     setError(null);
     setLoading(true);
     try {
-      const body: UpdateUserDto = {};
+      // Only send changed fields; always send at least name to avoid empty body
+      const body: { name?: string; email?: string } = {};
       if (name !== user.name) body.name = name;
       if (email !== user.email) body.email = email;
+      if (Object.keys(body).length === 0) { onClose(); return; }
       const updated = await api.users.update(accessToken, user.id, body);
       onSave(updated);
     } catch (e) {
