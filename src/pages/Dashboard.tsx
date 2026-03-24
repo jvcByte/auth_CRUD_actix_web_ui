@@ -1,17 +1,21 @@
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { LogOut, User, KeyRound, Bell, ChevronRight, Shield } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { LogOut, User, KeyRound, Bell, ChevronRight, Shield, Users } from "lucide-react";
 
 const menuItems = [
-  { label: "Edit Profile", icon: User, color: "text-indigo-400", bg: "bg-indigo-500/10" },
-  { label: "Change Password", icon: KeyRound, color: "text-purple-400", bg: "bg-purple-500/10" },
-  { label: "Notifications", icon: Bell, color: "text-pink-400", bg: "bg-pink-500/10" },
-  { label: "Security", icon: Shield, color: "text-emerald-400", bg: "bg-emerald-500/10" },
+  { label: "User Management", icon: Users, color: "text-indigo-400", bg: "bg-indigo-500/10", route: "/users" },
+  { label: "Edit Profile", icon: User, color: "text-purple-400", bg: "bg-purple-500/10", route: null },
+  { label: "Change Password", icon: KeyRound, color: "text-pink-400", bg: "bg-pink-500/10", route: null },
+  { label: "Notifications", icon: Bell, color: "text-amber-400", bg: "bg-amber-500/10", route: null },
+  { label: "Security", icon: Shield, color: "text-emerald-400", bg: "bg-emerald-500/10", route: null },
 ];
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const initials = user?.name
     .split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
@@ -66,7 +70,11 @@ export default function Dashboard() {
             const Icon = item.icon;
             return (
               <button key={item.label}
-                className={`w-full flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-colors text-left ${i < menuItems.length - 1 ? "border-b border-white/5" : ""}`}>
+                onClick={() => item.route && navigate(item.route)}
+                className={cn(
+                  `w-full flex items-center gap-4 px-5 py-4 transition-colors text-left ${i < menuItems.length - 1 ? "border-b border-white/5" : ""}`,
+                  item.route ? "hover:bg-white/5 cursor-pointer" : "cursor-default opacity-60"
+                )}>
                 <div className={`w-9 h-9 rounded-xl ${item.bg} ${item.color} flex items-center justify-center shrink-0`}>
                   <Icon className="w-4 h-4" />
                 </div>

@@ -4,6 +4,9 @@ export interface AuthUser {
   id: string;
   name: string;
   email: string;
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface AuthResponse {
@@ -48,6 +51,11 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   return res.json();
 }
 
+export interface UpdateUserDto {
+  name?: string;
+  email?: string;
+}
+
 export const api = {
   auth: {
     register: (body: { name: string; email: string; password: string }) =>
@@ -60,5 +68,22 @@ export const api = {
       request<void>("/api/auth/logout", { method: "POST", body: JSON.stringify({ refresh_token }) }),
     me: (access_token: string) =>
       request<AuthUser>("/api/auth/me", { headers: { Authorization: `Bearer ${access_token}` } }),
+  },
+  users: {
+    list: (access_token: string) =>
+      request<AuthUser[]>("/api/users", { headers: { Authorization: `Bearer ${access_token}` } }),
+    get: (access_token: string, id: string) =>
+      request<AuthUser>(`/api/users/${id}`, { headers: { Authorization: `Bearer ${access_token}` } }),
+    update: (access_token: string, id: string, body: UpdateUserDto) =>
+      request<AuthUser>(`/api/users/${id}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${access_token}` },
+        body: JSON.stringify(body),
+      }),
+    delete: (access_token: string, id: string) =>
+      request<void>(`/api/users/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${access_token}` },
+      }),
   },
 };
