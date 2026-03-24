@@ -77,13 +77,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     const res = await api.auth.login({ email, password });
-    setAuth(res.access_token, res.user, res.refresh_token);
+    const user = await api.auth.me(res.access_token);
+    setAuth(res.access_token, user, res.refresh_token);
     scheduleRefresh(res.expires_in);
   }, [setAuth, scheduleRefresh]);
 
   const register = useCallback(async (name: string, email: string, password: string) => {
     const res = await api.auth.register({ name, email, password });
-    setAuth(res.access_token, res.user, res.refresh_token);
+    const user = await api.auth.me(res.access_token);
+    setAuth(res.access_token, user, res.refresh_token);
     scheduleRefresh(res.expires_in);
   }, [setAuth, scheduleRefresh]);
 
